@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login-form',
@@ -9,7 +9,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 export class LoginFormComponent implements OnInit {
 
-  public formGroup!: FormGroup;
+  public formGroup!: UntypedFormGroup;
 
   @Input() formError = '';
   @Output() login = new EventEmitter();
@@ -18,9 +18,9 @@ export class LoginFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.formGroup = new FormGroup({
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required])
+    this.formGroup = new UntypedFormGroup({
+      username: new UntypedFormControl('', [Validators.required]),
+      password: new UntypedFormControl('', [Validators.required])
     });
   }
 
