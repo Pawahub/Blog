@@ -37,10 +37,12 @@ const initialState: AuthState = {
 
 export const authReducer = createReducer(
   initialState,
+
   on(login, state => ({
     ...state,
     loading: true
   })),
+
   on(loginSuccess, (state, {type, ...authData}: { type: string } & AuthData) => ({
     ...state,
     authData,
@@ -48,6 +50,7 @@ export const authReducer = createReducer(
     loading: false,
     serverError: ''
   })),
+
   on(loginFailed, (state, {serverError}) => ({
     ...state,
     loaded: true,

@@ -16,13 +16,10 @@ export class LoginFormComponent implements OnInit {
 
   @Output() login = new EventEmitter();
 
-  constructor() {
-  }
-
   ngOnInit(): void {
     this.formGroup = new FormGroup({
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required])
+      username: new FormControl('testname', [Validators.required]),
+      password: new FormControl('testpassword', [Validators.required])
     });
   }
 

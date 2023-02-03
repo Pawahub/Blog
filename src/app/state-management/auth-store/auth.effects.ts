@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { login, loginFailed, loginSuccess } from './auth.actions';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, delayWhen, filter, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
-import { of } from 'rxjs';
+import { of, timer } from 'rxjs';
 import { AuthData } from "./auth.reducer";
+import { Store } from "@ngrx/store";
+import { isAuth } from "./auth.selectors";
 
 @Injectable()
 export class AuthEffects {
@@ -15,16 +17,32 @@ export class AuthEffects {
       identifier: action.username,
       password: action.password
     }).pipe(
-      map((loginSuccessData: AuthData) => loginSuccess(loginSuccessData)),
-      catchError(
-        response => of(loginFailed({
-          serverError: response.error.error.message
-        }))
+      map((loginSuccessData: AuthData) => {
+        localStorage.setItem('token', loginSuccessData.jwt);
+        return loginSuccess(loginSuccessData)
+      }),
+      catchError(response =>
+        of(loginFailed({serverError: response}))
       )
     ))
   ));
 
+  refresh$ = createEffect(() => this.actions$.pipe(
+    ofType(loginSuccess),
+    withLatestFrom(this.store$.select(isAuth)),
+    filter(([, isAuth]) => !!isAuth),
+    delayWhen(([authData]) => timer(5000)),
+    switchMap(() => this.authService.refresh()
+      .pipe(
+        map((authData: AuthData) => {
+          localStorage.setItem('token', authData.jwt);
+          return loginSuccess(authData);
+        }))
+    )
+  ));
+
   constructor(private actions$: Actions,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private store$: Store) {
   }
 }

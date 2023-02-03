@@ -22,4 +22,17 @@ export class AuthService {
       ...this.jwtHelperService.decodeToken(res.jwt)
     })));
   }
+
+  refresh() {
+    return this.httpClient.post<AuthData>(
+      'http://localhost:1337/api/token/refresh',
+      {},
+      {
+        withCredentials: true
+      }
+    ).pipe(map(res => ({
+      ...res,
+      ...this.jwtHelperService.decodeToken(res.jwt)
+    })));
+  }
 }

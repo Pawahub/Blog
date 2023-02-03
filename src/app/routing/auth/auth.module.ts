@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { JwtModule } from "@auth0/angular-jwt";
 import { RouterModule } from "@angular/router";
 import { StoreModule } from "@ngrx/store";
@@ -10,6 +10,7 @@ import { LoginModule } from "../../components/login/login.module";
 import { AUTH_FEATURE_NAME, authReducer } from "../../state-management/auth-store/auth.reducer";
 import { AuthEffects } from "../../state-management/auth-store/auth.effects";
 import { AuthService } from "../../services/auth.service";
+import { AuthInterceptor } from "../../interceptors/auth.interceptor";
 
 import { LoginPageComponent } from './login-page/login-page.component';
 
@@ -40,7 +41,14 @@ import { LoginPageComponent } from './login-page/login-page.component';
     EffectsModule.forFeature([AuthEffects]),
     LoginModule
   ],
-  providers: [AuthService]
+  providers: [
+    AuthService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ]
 })
 export class AuthModule {
 }
