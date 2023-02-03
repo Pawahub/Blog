@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable } from "rxjs";
-import { select, Store } from "@ngrx/store";
+import { Store } from "@ngrx/store";
 import { getLoaded, getLoading, getServerError } from "../../../state-management/auth-store/auth.selectors";
 import { login } from "../../../state-management/auth-store/auth.actions";
 
@@ -11,10 +11,9 @@ import { login } from "../../../state-management/auth-store/auth.actions";
 })
 
 export class LoginUiComponent {
-
-  loading$: Observable<any> = this.store$.pipe(select(getLoading));
-  loaded$: Observable<any> = this.store$.pipe(select(getLoaded));
-  serverError$: Observable<any> = this.store$.pipe(select(getServerError));
+  loading$: Observable<any> = this.store$.select(getLoading);
+  loaded$: Observable<any> = this.store$.select(getLoaded);
+  serverError$: Observable<any> = this.store$.select(getServerError);
 
   constructor(private store$: Store) {
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthData } from "../state-management/auth-store/auth.reducer";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { map } from "rxjs/operators";
@@ -17,6 +17,22 @@ export class AuthService {
     return this.httpClient.post<AuthData>(
       'http://localhost:1337/api/auth/local',
       body
+    ).pipe(map(res => ({
+      ...res,
+      ...this.jwtHelperService.decodeToken(res.jwt)
+    })));
+  }
+
+  refresh() {
+    return this.httpClient.post<AuthData>(
+      'http://localhost:1337/api/token/refresh',
+      {refreshToken: localStorage.getItem('token')},
+      {
+        headers: new HttpHeaders({
+          'Access-Control-Allow-Origin': '*'
+        }),
+        withCredentials: true
+      }
     ).pipe(map(res => ({
       ...res,
       ...this.jwtHelperService.decodeToken(res.jwt)
